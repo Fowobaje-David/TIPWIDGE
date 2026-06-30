@@ -4,7 +4,7 @@
  * Drop this on any website to render the tipping widget:
  *
  *   <div id="lightning-tip"></div>
- *   <script src="https://YOUR-APP.vercel.app/embed.js" async></script>
+ *   <script src="https://tipwidge.vercel.app/embed.js" async></script>
  *
  * Optional config via data-attributes on the script tag:
  *   data-target="lightning-tip"   (id of the mount element)

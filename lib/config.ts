@@ -15,15 +15,17 @@ function firstLine(value: string | undefined, fallback = ""): string {
   return line ?? fallback;
 }
 
-// API keys/URLs must contain no whitespace at all.
-function compact(value: string | undefined, fallback = ""): string {
-  if (!value) return fallback;
-  return value.replace(/\s+/g, "");
+// API keys/URLs are single tokens. Take the FIRST non-empty line (a mis-paste
+// can duplicate the value across many lines) and strip any internal whitespace.
+// NOTE: must take one line — concatenating duplicated lines yields a bad token.
+function cleanToken(value: string | undefined, fallback = ""): string {
+  const line = firstLine(value, fallback);
+  return line.replace(/\s+/g, "");
 }
 
 export function getLnbitsConfig() {
-  const url = compact(process.env.LNBITS_URL).replace(/\/+$/, "");
-  const invoiceKey = compact(process.env.LNBITS_INVOICE_KEY);
+  const url = cleanToken(process.env.LNBITS_URL).replace(/\/+$/, "");
+  const invoiceKey = cleanToken(process.env.LNBITS_INVOICE_KEY);
   if (!url || !invoiceKey) {
     throw new Error(
       "Missing LNbits configuration. Set LNBITS_URL and LNBITS_INVOICE_KEY."
@@ -50,7 +52,7 @@ export function getCreatorConfig(): CreatorConfig {
     ),
     presetAmounts: presetAmounts.length ? presetAmounts : [100, 500, 1000],
     networkLabel: firstLine(process.env.NETWORK_LABEL, "mainnet"),
-    baseUrl: compact(process.env.NEXT_PUBLIC_BASE_URL),
+    baseUrl: cleanToken(process.env.NEXT_PUBLIC_BASE_URL),
   };
 }
 
